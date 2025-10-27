@@ -1,0 +1,45 @@
+:root {
+  /* === COLORS === */
+  --color-primary: red;
+  --color-primary-rgba: 255, 0, 0;
+
+  --color-text: white;
+  --color-highlight: yellow;
+
+  --color-bg-main: black;
+  --color-bg-panel: #000;
+  --color-bg-container: #87cefa;
+
+  /* === LAYOUT & SPACING === */
+  --container-width: 50%;
+  --container-padding: 20px;
+  --left-panel-width: 200px;
+  --content-gap: 20px;
+
+  /* === COMPONENT SIZES === */
+  --light-height: 100px;
+  --logo-height: 20%;
+  --font-size-minecraft: 16px;
+
+  /* === EFFECTS === */
+  --blur-strength: 40px;
+  --animation-duration-container: 5s;
+  --animation-duration-light: 10s;
+  --animation-duration-minecraft: 2s;
+  --animation-ease: ease-in-out;
+
+  /* === SHADOWS === */
+  --box-shadow-base:
+    rgba(var(--color-primary-rgba), 0.25) 0px 54px 55px,
+    rgba(var(--color-primary-rgba), 0.12) 0px -12px 30px,
+    rgba(var(--color-primary-rgba), 0.12) 0px 4px 6px,
+    rgba(var(--color-primary-rgba), 0.17) 0px 12px 13px,
+    rgba(var(--color-primary-rgba), 0.09) 0px -3px 5px;
+
+  --box-shadow-animated:
+    rgba(var(--color-primary-rgba), 0.45) 0px 54px 55px,
+    rgba(var(--color-primary-rgba), 0.32) 0px -12px 30px,
+    rgba(var(--color-primary-rgba), 0.32) 0px 4px 6px,
+    rgba(var(--color-primary-rgba), 0.37) 0px 12px 13px,
+    rgba(var(--color-primary-rgba), 0.29) 0px -3px 5px;
+}
