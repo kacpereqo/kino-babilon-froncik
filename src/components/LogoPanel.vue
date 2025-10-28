@@ -33,9 +33,13 @@ const MINECRAFT_PHRASES = [
 const effectElement = ref<HTMLElement | null>(null)
 
 onMounted(() => {
+  const randomIndex = Math.floor(Math.random() * MINECRAFT_PHRASES.length)
+
   if (effectElement.value) {
-    const randomIndex = Math.floor(Math.random() * MINECRAFT_PHRASES.length)
-    effectElement.value.textContent = MINECRAFT_PHRASES[randomIndex]
+    const text = MINECRAFT_PHRASES[randomIndex]
+    if (text) {
+      effectElement.value.textContent = text
+    }
   }
 })
 </script>
