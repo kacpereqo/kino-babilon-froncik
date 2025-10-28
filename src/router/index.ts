@@ -5,15 +5,15 @@ const router = createRouter({
   routes: [
     {
       path: '/galeria',
-      component: () => import('../components/Gallery.vue'),
+      component: () => import('@/components/Gallery.vue'),
     },
     {
       path: '/:pathMatch(.*)*',
-      component: () => import('../components/Home.vue'),
+      component: () => import('@/components/Home.vue'),
     },
     {
       path: '/login/discord',
-      component: () => import('../components/LoginFinish.vue'),
+      component: () => import('@/components/LoginFinish.vue'),
       props: (route) => ({ code: route.query.code, state: route.query.state }),
     },
   ],

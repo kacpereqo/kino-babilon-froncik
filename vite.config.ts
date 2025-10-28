@@ -7,7 +7,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    allowedHosts: ['imaging-attend-impose-clothes.trycloudflare.com'],
+    allowedHosts: ['api-kino', 'dev.api-kino'],
   },
   plugins: [vue(), vueDevTools()],
   base: '/',
