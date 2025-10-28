@@ -19,7 +19,8 @@
     <div class="bottom-content">
       <div id="left-panel">
         <div id="login-panel" class="scaffolding-element">
-          <LoginPanel />
+          <LoginPanel v-if="!authStore.isAuthenticated" />
+          <UserPanel v-else />
         </div>
         <div id="navigation" class="scaffolding-element">
           <Navigation />
@@ -37,6 +38,11 @@
 import Navigation from './NavigationPanel.vue'
 import LoginPanel from './LoginPanel.vue'
 import LogoPanel from './LogoPanel.vue'
+import UserPanel from './UserPanel.vue'
+import { useAuthStore } from '@/stores/auth'
+import { onMounted } from 'vue'
+
+const authStore = useAuthStore()
 </script>
 
 <style>

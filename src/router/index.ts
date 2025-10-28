@@ -11,6 +11,11 @@ const router = createRouter({
       path: '/:pathMatch(.*)*',
       component: () => import('../components/Home.vue'),
     },
+    {
+      path: '/login/discord',
+      component: () => import('../components/LoginFinish.vue'),
+      props: (route) => ({ code: route.query.code, state: route.query.state }),
+    },
   ],
 })
 
