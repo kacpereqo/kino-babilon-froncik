@@ -7,6 +7,7 @@ export interface DiscordUser {
   discord_id: string
   nickname: string
   permission_level: number
+  avatar_url: string
 }
 
 /** Represents the full OAuth login response */

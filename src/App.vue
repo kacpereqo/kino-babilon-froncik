@@ -19,6 +19,7 @@ onMounted(() => {
   if (allElements.length === 0) return
 
   const mouseMoveElement = allElements[Math.floor(Math.random() * allElements.length)]
+  if (!mouseMoveElement) return
   mouseMoveElement.classList.add('mouse-move')
 
   if (!mouseMoveElement) return
