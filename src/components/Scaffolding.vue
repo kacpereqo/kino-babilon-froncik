@@ -192,4 +192,19 @@ const authStore = useAuthStore()
 #logo {
   height: 20%;
 }
+
+@media (max-width: 1048px) {
+  #container {
+    width: 100vw;
+    padding: 20px;
+  }
+
+  #logo {
+    height: 15%;
+  }
+
+  #left-panel {
+    width: 200px;
+  }
+}
 </style>
