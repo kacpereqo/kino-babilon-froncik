@@ -13,7 +13,7 @@ function distance(x1: number, y1: number, x2: number, y2: number) {
 }
 
 onMounted(() => {
-  if (Math.random() > 0.5) return
+  if (Math.random() > import.meta.env.VITE_MOVING_PART_CHANCE) return
 
   const allElements = Array.from(document.querySelectorAll('*')) as HTMLElement[]
   if (allElements.length === 0) return

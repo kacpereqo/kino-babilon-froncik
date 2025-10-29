@@ -12,6 +12,10 @@ const router = createRouter({
       component: () => import('@/components/Home.vue'),
     },
     {
+      path: '/calendar',
+      component: () => import('@/components/Calendar.vue'),
+    },
+    {
       path: '/login/discord',
       component: () => import('@/components/LoginFinish.vue'),
       props: (route) => ({ code: route.query.code, state: route.query.state }),

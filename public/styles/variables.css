@@ -11,9 +11,9 @@
   --color-bg-container: #87cefa;
 
   /* === LAYOUT & SPACING === */
-  --container-width: 50%;
+  --container-width: 60%;
   --container-padding: 20px;
-  --left-panel-width: 250px;
+  --left-panel-width: 200px;
   --content-gap: 20px;
 
   /* === COMPONENT SIZES === */
