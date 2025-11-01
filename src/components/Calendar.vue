@@ -22,17 +22,28 @@
         v-for="day in gridDays"
         :key="day"
         @click="onClickDay(day)"
-        class="calendar-day calendar-playing"
+        class="calendar-day "
         :class="{
           'calendar-other-month': !isCurrentMonth(day),
+          'calendar-playing' : isPlayingToday(day)
         }"
       >
         <strong>{{ dayToDayOfMonth(day) }}</strong>
       </div>
     </div>
     <div id="description">
+      <strong>{{ selectedDate ? dateFormat(selectedDate) : '' }}</strong>
       <p>
-        <strong>{{ selectedDate ? dateFormat(selectedDate) : '' }}</strong>
+        <ul class="calendar-screenings" v-if="dayScreenings.length > 0">
+          <li v-for="screening in dayScreenings" :key="screening.sid">
+            {{ new Date(screening.start_datetime).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) }} 
+            · {{ datetimeLength(screening.start_datetime, screening.end_datetime) }} 
+            · {{ screening.location }}
+            <li>
+              {{ screening.description }}
+            </li>
+          </li>
+        </ul>
       </p>
     </div>
   </div>
@@ -43,11 +54,12 @@ import { ref, computed, onMounted } from 'vue'
 
 const gridDays = 7 * 6
 const screenings = ref<Array<ScreeningResponse>>([])
+const dayScreenings = ref<Array<ScreeningResponse>>([])
 
-const url = import.meta.env.VITE_API_URL + '/screenings/by_date_range/'
+const url = import.meta.env.VITE_API_URL + '/screenings/basic-by-date-range'
 const params = {
-  start_date: '2025-01-10',
-  end_date: '2025-12-31',
+  start_date: '2025-01-01T00:00:00',
+  end_date: '2025-12-12T00:00:00',
 }
 
 const queryString = new URLSearchParams(params).toString()
@@ -67,13 +79,9 @@ interface ScreeningResponse {
 onMounted(async () => {
   try {
     const response = await fetch(fullUrl)
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
+    if (!response.ok) return
     screenings.value = await response.json()
-    console.log('Fetched screenings:', screenings.value)
   } catch (error) {
-    console.error('Error fetching screenings:', error)
   }
 })
 
@@ -82,6 +90,49 @@ const selectedDate = ref<Date | null>(null)
 
 function dateFormat(date: Date): string {
   return date.toLocaleDateString('pl-PL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+function datetimeLength(start: string, end: string): string {
+  const startDate = new Date(start)
+  const endDate = new Date(end)
+
+  // return x h y min
+  const diffMs = endDate.getTime() - startDate.getTime()
+  const diffHrs = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+  
+  if (diffHrs === 0) 
+    return `${diffMins} min`
+
+  else if (diffMins === 0)
+    return `${diffHrs} h`
+else
+  return `${diffHrs}h ${diffMins}min`
+}
+
+function getDayScreenings(day: number) :void {
+  const URL = import.meta.env.VITE_API_URL + '/screenings/by-date-range'
+  const date = dayToDate(day)
+  const start_date = new Date(date.getFullYear(), date.getMonth(), date.getDate
+(), 0, 0, 0)
+  const end_date = new Date(date.getFullYear(), date.getMonth(), date.getDate
+(), 23, 59, 59)
+  const params = {
+    start_date: start_date.toISOString(),
+    end_date: end_date.toISOString(),
+  }
+
+  const queryString = new URLSearchParams(params).toString()
+  const fullUrl = `${URL}?${queryString}`
+
+  fetch(fullUrl)
+    .then((response) => {
+      if (!response.ok) return
+      return response.json()
+    })
+    .then((data) => {
+      dayScreenings.value = data
+    })
 }
 
 function dayToDate(day: number): Date {
@@ -94,8 +145,22 @@ function dayToDate(day: number): Date {
   )
 }
 
+function isPlayingToday(day: number): boolean {
+  const date = dayToDate(day)
+  return screenings.value.some((screening) => {
+    const screeningDate = new Date(screening.start_datetime)
+    return (
+      screeningDate.getFullYear() === date.getFullYear() &&
+      screeningDate.getMonth() === date.getMonth() &&
+      screeningDate.getDate() === date.getDate()
+    ) 
+  })
+}
+
 function onClickDay(day: number) {
+  dayScreenings.value = []
   selectedDate.value = dayToDate(day)
+  getDayScreenings(day);
 }
 
 const daysInCurrentMonth = computed(() =>
@@ -196,5 +261,19 @@ function getDaysInMonth(month: number, year: number): number {
 
 .calendar-day:hover {
   background-color: rgba(200, 200, 200, 0.3);
+}
+
+.calendar-screenings {
+  margin-left: 20px;
+}
+
+li li{
+  margin-left: 20px;
+  color: darkgray;
+  list-style: circle;
+}
+
+ul li{
+  margin-bottom: 5px;
 }
 </style>

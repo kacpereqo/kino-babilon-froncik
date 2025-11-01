@@ -20,6 +20,10 @@ const router = createRouter({
       component: () => import('@/components/LoginFinish.vue'),
       props: (route) => ({ code: route.query.code, state: route.query.state }),
     },
+    {
+      path: '/citates',
+      component: () => import('@/components/Citates.vue'),
+    }
   ],
 })
 

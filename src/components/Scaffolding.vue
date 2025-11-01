@@ -28,6 +28,7 @@
       </div>
 
       <div class="main-content scaffolding-element">
+        <marquee>DZISIAJ W 712: HALLOWEEN</marquee>
         <router-view />
       </div>
     </div>
@@ -171,7 +172,15 @@ const authStore = useAuthStore()
   max-height: 100%;
   overflow: auto;
   width: 100%;
+  position: relative;
   background-color: var(--color-bg-main);
+}
+
+.main-content marquee {
+position: absolute;
+width: 100%;
+left:0;
+top:0;
 }
 
 .video-bg {
