@@ -77,6 +77,7 @@ onMounted(() => {
   color: var(--color-highlight);
   transform: translate(40%, 0) rotate(-20deg);
   user-select: none;
+  z-index: 10;
   animation: minecraft-animation var(--animation-duration-minecraft) infinite var(--animation-ease);
 }
 </style>
