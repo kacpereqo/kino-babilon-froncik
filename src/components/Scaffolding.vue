@@ -172,15 +172,18 @@ const authStore = useAuthStore()
   max-height: 100%;
   overflow: auto;
   width: 100%;
+  padding: 20px;
   position: relative;
+  overflow-y: scroll;
+  scrollbar-width: thin;
   background-color: var(--color-bg-main);
 }
 
 .main-content marquee {
-position: absolute;
-width: 100%;
-left:0;
-top:0;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
 }
 
 .video-bg {

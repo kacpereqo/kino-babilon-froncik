@@ -39,9 +39,9 @@
             {{ new Date(screening.start_datetime).toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' }) }} 
             · {{ datetimeLength(screening.start_datetime, screening.end_datetime) }} 
             · {{ screening.location }}
-            <li>
+            <p>
               {{ screening.description }}
-            </li>
+            </p>
           </li>
         </ul>
       </p>
@@ -51,19 +51,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useScreeningsStore } from '@/stores/screenings'
+
+const screeningsStore = useScreeningsStore()
 
 const gridDays = 7 * 6
-const screenings = ref<Array<ScreeningResponse>>([])
 const dayScreenings = ref<Array<ScreeningResponse>>([])
-
-const url = import.meta.env.VITE_API_URL + '/screenings/basic-by-date-range'
-const params = {
-  start_date: '2025-01-01T00:00:00',
-  end_date: '2025-12-12T00:00:00',
-}
-
-const queryString = new URLSearchParams(params).toString()
-const fullUrl = `${url}?${queryString}`
 
 interface ScreeningResponse {
   sid: number
@@ -77,12 +70,7 @@ interface ScreeningResponse {
 }
 
 onMounted(async () => {
-  try {
-    const response = await fetch(fullUrl)
-    if (!response.ok) return
-    screenings.value = await response.json()
-  } catch (error) {
-  }
+  await screeningsStore.fetchAll()
 })
 
 const currentDate = ref(new Date())
@@ -96,43 +84,18 @@ function datetimeLength(start: string, end: string): string {
   const startDate = new Date(start)
   const endDate = new Date(end)
 
-  // return x h y min
   const diffMs = endDate.getTime() - startDate.getTime()
   const diffHrs = Math.floor(diffMs / (1000 * 60 * 60))
   const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-  
-  if (diffHrs === 0) 
-    return `${diffMins} min`
 
-  else if (diffMins === 0)
-    return `${diffHrs} h`
-else
-  return `${diffHrs}h ${diffMins}min`
+  if (diffHrs === 0) return `${diffMins} min`
+  else if (diffMins === 0) return `${diffHrs} h`
+  else return `${diffHrs}h ${diffMins}min`
 }
 
-function getDayScreenings(day: number) :void {
-  const URL = import.meta.env.VITE_API_URL + '/screenings/by-date-range'
+async function getDayScreenings(day: number): Promise<void> {
   const date = dayToDate(day)
-  const start_date = new Date(date.getFullYear(), date.getMonth(), date.getDate
-(), 0, 0, 0)
-  const end_date = new Date(date.getFullYear(), date.getMonth(), date.getDate
-(), 23, 59, 59)
-  const params = {
-    start_date: start_date.toISOString(),
-    end_date: end_date.toISOString(),
-  }
-
-  const queryString = new URLSearchParams(params).toString()
-  const fullUrl = `${URL}?${queryString}`
-
-  fetch(fullUrl)
-    .then((response) => {
-      if (!response.ok) return
-      return response.json()
-    })
-    .then((data) => {
-      dayScreenings.value = data
-    })
+  dayScreenings.value = await screeningsStore.fetchByDate(date)
 }
 
 function dayToDate(day: number): Date {
@@ -147,21 +110,14 @@ function dayToDate(day: number): Date {
 
 function isPlayingToday(day: number): boolean {
   const date = dayToDate(day)
-  return screenings.value.some((screening) => {
-    const screeningDate = new Date(screening.start_datetime)
-    return (
-      screeningDate.getFullYear() === date.getFullYear() &&
-      screeningDate.getMonth() === date.getMonth() &&
-      screeningDate.getDate() === date.getDate()
-    ) 
-  })
+  return screeningsStore.isPlayingOnDate(date)
 }
 
-function onClickDay(day: number) {
-  dayScreenings.value = []
+async function onClickDay(day: number) {
   selectedDate.value = dayToDate(day)
-  getDayScreenings(day);
+  await getDayScreenings(day)
 }
+
 
 const daysInCurrentMonth = computed(() =>
   getDaysInMonth(currentDate.value.getMonth(), currentDate.value.getFullYear()),
@@ -173,15 +129,14 @@ const daysInPreviousMonth = computed(() =>
 
 const firstDayOfMonth = computed(() => {
   const day = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), 1).getDay()
-  // make Monday = 0
-  return (day + 6) % 7
+  return (day + 6) % 7 // make Monday = 0
 })
 
 const formattedDate = computed(() =>
   currentDate.value.toLocaleString('pl-PL', { month: 'long', year: 'numeric' }),
 )
 
-function isCurrentMonth(day: number) {
+function isCurrentMonth(day: number): boolean {
   return day - firstDayOfMonth.value > 0 && day - firstDayOfMonth.value <= daysInCurrentMonth.value
 }
 
@@ -203,6 +158,7 @@ function getDaysInMonth(month: number, year: number): number {
   return new Date(year, month + 1, 0).getDate()
 }
 </script>
+
 
 <style scoped>
 .container {
@@ -267,7 +223,7 @@ function getDaysInMonth(month: number, year: number): number {
   margin-left: 20px;
 }
 
-li li{
+li p{
   margin-left: 20px;
   color: darkgray;
   list-style: circle;
