@@ -10,7 +10,10 @@ import { onMounted, ref } from 'vue'
 function redirectToLogin() {
   const url = import.meta.env.VITE_API_URL + '/auth/login'
 
-  fetch(url)
+  const params = { callback_url: 'http://localhost:5173/login/discord' }
+  const queryString = new URLSearchParams(params).toString()
+
+  fetch(`${url}?${queryString}`)
     .then((data) => data.json())
     .then((data) => {
       window.location.href = data.url

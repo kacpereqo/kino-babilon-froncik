@@ -17,7 +17,8 @@
     </div>
 
     <div class="bottom-content">
-      <div id="left-panel">
+      <div id="left-panel" ref="leftPanel">
+        <div class="toggle-sidebar" ref="toggleSidebarBtn" @click="toogleSidebar"></div>
         <div id="login-panel" class="scaffolding-element">
           <LoginPanel v-if="!authStore.isAuthenticated" />
           <UserPanel v-else />
@@ -41,9 +42,21 @@ import LoginPanel from './LoginPanel.vue'
 import LogoPanel from './LogoPanel.vue'
 import UserPanel from './UserPanel.vue'
 import { useAuthStore } from '@/stores/auth'
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const authStore = useAuthStore()
+const leftPanel = ref<HTMLElement | null>(null)
+const toggleSidebarBtn = ref<HTMLElement | null>(null)
+
+function toogleSidebar() {
+  if (leftPanel.value) {
+    leftPanel.value.classList.toggle('hidden-mobile')
+  }
+
+  if (toggleSidebarBtn.value) {
+    toggleSidebarBtn.value.classList.toggle('toggle-sidebar-toggled')
+  }
+}
 </script>
 
 <style>
@@ -217,6 +230,54 @@ const authStore = useAuthStore()
 
   #left-panel {
     width: 200px;
+  }
+}
+
+.hidden-mobile {
+  right: 100% !important;
+}
+
+.toggle-sidebar {
+  display: none;
+  user-select: none;
+  position: absolute;
+}
+
+.toggle-sidebar-toggled::before {
+  content: '>' !important;
+}
+
+@media (max-width: 600px) {
+  #left-panel {
+    position: fixed;
+    transition: 0.3s;
+    top: 0;
+    width: 250px;
+    right: calc(100% - 250px);
+    height: 100vh;
+    background-image: url('/metal_plate.jpg');
+    padding: 20px;
+    z-index: 20;
+    box-shadow: var(--box-shadow-base);
+  }
+
+  .toggle-sidebar::before {
+    content: '<';
+  }
+
+  .toggle-sidebar {
+    display: block;
+    left: calc(100%);
+    top: 50%;
+    width: 30px;
+    height: 40px;
+    background-color: var(--color-bg-main);
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: var(--box-shadow-base);
+    cursor: pointer;
+    z-index: 25;
+    transform: translateY(-50%);
   }
 }
 </style>
